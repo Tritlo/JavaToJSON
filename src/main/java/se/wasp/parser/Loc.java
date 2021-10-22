@@ -12,9 +12,9 @@ public class Loc implements NodePainter {
         Object spobj = tree.getMetadata("spoon_object");
         if (spobj != null){
             CtElement el = (CtElement) spobj;
-            var loc = new JsonObject();
             var pos = el.getPosition();
             if (pos.isValidPosition()){
+                var loc = new JsonObject();
                 loc.addProperty("start-line", pos.getLine());
                 loc.addProperty("end-line", pos.getEndLine());
                 loc.addProperty("start-col", pos.getColumn());
@@ -22,6 +22,8 @@ public class Loc implements NodePainter {
                 loc.addProperty("file", pos.getFile().getAbsolutePath());
                 jsontree.add("location", loc);
             }
+            jsontree.addProperty("pretty-printed", el.toString());
+            // TODO: add imports if we are in the root of a file.
         }
     }
 
