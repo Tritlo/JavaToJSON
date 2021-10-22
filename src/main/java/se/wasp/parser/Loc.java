@@ -16,10 +16,7 @@ import spoon.support.reflect.declaration.CtClassImpl;
 
 public class Loc implements NodePainter {
 
-    public void paint(ITree tree, JsonObject jsontree){
-        Object spobj = tree.getMetadata("spoon_object");
-        if (spobj != null){
-            CtElement el = (CtElement) spobj;
+    public static JsonObject getPosObj (CtElement el ){
             var pos = el.getPosition();
             if (pos.isValidPosition()){
                 var loc = new JsonObject();
@@ -28,13 +25,35 @@ public class Loc implements NodePainter {
                 loc.addProperty("start-col", pos.getColumn());
                 loc.addProperty("end-col", pos.getEndColumn());
                 loc.addProperty("file", pos.getFile().getAbsolutePath());
-                jsontree.add("location", loc);
+                return loc;
             }
+            return null;
+    }
+
+    public void paint(ITree tree, JsonObject jsontree){
+        Object spobj = tree.getMetadata("spoon_object");
+        if (spobj != null){
+            CtElement el = (CtElement) spobj;
+            var pos = el.getPosition();
+            jsontree.add("location", getPosObj(el));
             jsontree.addProperty("pretty-printed", el.toString());
             jsontree.addProperty("spoon-class", spobj.getClass().getName());
 
             if (spobj.getClass() == CtClassImpl.class){
-                var imports = Arrays.stream(pos.getCompilationUnit().getImports().toArray()).map(i -> ((CtImport) i).toString() ).toList();
+                var imports = Arrays.stream(pos.getCompilationUnit().getImports().toArray()).map(i ->
+                    {  CtImport iel = (CtImport) i;
+                       var imp = new JsonObject();
+                       imp.addProperty("type", "Import");
+                       if (iel.getReference() != null){
+                        imp.addProperty("label", iel.getReference().toString());
+                       } else {
+                        imp.addProperty("label", iel.toString());
+                       }
+                       imp.add("location", getPosObj(iel));
+                       imp.addProperty("pretty-printed", iel.toString());
+                       imp.addProperty("spoon-class", i.getClass().getName());
+                       return imp;
+                    }).toList();
                 JsonArray imps = new JsonArray();
                 for (var i : imports){
                     imps.add(i);
