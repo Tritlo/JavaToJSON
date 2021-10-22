@@ -20,7 +20,7 @@ Example:
 
 The source for this project, in `Parser.java`:
 
-```
+```java
 package se.wasp.parser;
 
 import java.io.File;
@@ -68,7 +68,7 @@ public class Parser
 
 The source for the "tests" for this project, in `AppTest.java`:
 
-```
+```java
 package se.wasp;
 
 import static org.junit.Assert.assertTrue;
@@ -95,7 +95,7 @@ Output of running
 
 `java -jar target/parser-1.0-jar-with-dependencies.jar src/main/java/se/wasp/parser/Parser.java src/test/java/se/wasp/AppTest.java`
 
-```
+```json
 [
   {
     "label": "",
