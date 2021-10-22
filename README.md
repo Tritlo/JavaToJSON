@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 import com.google.gson.Gson;
@@ -47,23 +48,18 @@ public class Parser
     {
         var results = Arrays.stream(args).map((Function<String, JsonObject>) file ->
         {
-            try {
-                return (new Json4SpoonGenerator()).getJSONasJsonObject(Launcher.parseClass(FileUtils.readFileToString(new File(file), "utf8")));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return null;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
+                var launcher = new Launcher();
+                launcher.getEnvironment().setCommentEnabled(true);
+                launcher.addInputResource(file);
+                launcher.buildModel();
+                // Use J4S to make it into JSON
+                return (new Json4SpoonGenerator()).getJSONasJsonObject(launcher.getModel().getRootPackage());
 
         }).filter( obj -> obj != null).toList();
 
        System.out.println((new Gson()).toJson(results));
     }
 }
-
-
 ```
 
 The source for the "tests" for this project, in `AppTest.java`:
@@ -93,7 +89,7 @@ public class AppTest
 
 Output of running
 
-`java -jar target/parser-1.0-jar-with-dependencies.jar src/main/java/se/wasp/parser/Parser.java src/test/java/se/wasp/AppTest.java | jq`
+`mvn clean install && java -jar target/parser-1.0-jar-with-dependencies.jar src/main/java/se/wasp/ src/test/java/se/ | jq `
 
 ```json
 [
@@ -102,157 +98,224 @@ Output of running
     "type": "root",
     "children": [
       {
-        "label": "Parser",
-        "type": "Class",
+        "label": "unnamed package",
+        "type": "RootPac",
         "children": [
           {
-            "label": "",
-            "type": "Modifiers_Class",
+            "label": "se",
+            "type": "Package",
             "children": [
               {
-                "label": "public",
-                "type": "Modifier",
-                "children": []
-              }
-            ]
-          },
-          {
-            "label": "main",
-            "type": "Method",
-            "children": [
-              {
-                "label": "void",
-                "type": "RETURN_TYPE",
-                "children": []
-              },
-              {
-                "label": "",
-                "type": "Modifiers_Method",
+                "label": "wasp",
+                "type": "Package",
                 "children": [
                   {
-                    "label": "public",
-                    "type": "Modifier",
-                    "children": []
-                  },
-                  {
-                    "label": "static",
-                    "type": "Modifier",
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "label": "args",
-                "type": "Parameter",
-                "children": [
-                  {
-                    "label": "java.lang.String[]",
-                    "type": "VARIABLE_TYPE",
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "label": "results",
-                "type": "LocalVariable",
-                "children": [
-                  {
-                    "label": "se.wasp.parser.var",
-                    "type": "VARIABLE_TYPE",
-                    "children": []
-                  },
-                  {
-                    "label": "toList",
-                    "type": "Invocation",
+                    "label": "parser",
+                    "type": "Package",
                     "children": [
                       {
-                        "label": "filter",
-                        "type": "Invocation",
+                        "label": "Parser",
+                        "type": "Class",
                         "children": [
                           {
-                            "label": "map",
-                            "type": "Invocation",
+                            "label": "",
+                            "type": "Modifiers_Class",
                             "children": [
                               {
-                                "label": "stream",
-                                "type": "Invocation",
+                                "label": "public",
+                                "type": "Modifier",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "label": "main",
+                            "type": "Method",
+                            "children": [
+                              {
+                                "label": "void",
+                                "type": "RETURN_TYPE",
+                                "children": []
+                              },
+                              {
+                                "label": "",
+                                "type": "Modifiers_Method",
                                 "children": [
                                   {
-                                    "label": "java.util.Arrays",
-                                    "type": "TypeAccess",
+                                    "label": "public",
+                                    "type": "Modifier",
                                     "children": []
                                   },
                                   {
-                                    "label": "args",
-                                    "type": "VariableRead",
+                                    "label": "static",
+                                    "type": "Modifier",
                                     "children": []
                                   }
                                 ]
                               },
                               {
-                                "label": "lambda$0",
-                                "type": "Lambda",
+                                "label": "args",
+                                "type": "Parameter",
                                 "children": [
                                   {
-                                    "label": "file",
-                                    "type": "Parameter",
-                                    "children": [
-                                      {
-                                        "label": "java.lang.String",
-                                        "type": "VARIABLE_TYPE",
-                                        "children": []
-                                      }
-                                    ]
+                                    "label": "java.lang.String[]",
+                                    "type": "VARIABLE_TYPE",
+                                    "children": []
+                                  }
+                                ]
+                              },
+                              {
+                                "label": "results",
+                                "type": "LocalVariable",
+                                "children": [
+                                  {
+                                    "label": "se.wasp.parser.var",
+                                    "type": "VARIABLE_TYPE",
+                                    "children": []
                                   },
                                   {
-                                    "label": "",
-                                    "type": "Try",
+                                    "label": "toList",
+                                    "type": "Invocation",
                                     "children": [
                                       {
-                                        "label": "return",
-                                        "type": "Return",
+                                        "label": "filter",
+                                        "type": "Invocation",
                                         "children": [
                                           {
-                                            "label": "getJSONasJsonObject",
+                                            "label": "map",
                                             "type": "Invocation",
                                             "children": [
                                               {
-                                                "label": "gumtree.spoon.builder.Json4SpoonGenerator()",
-                                                "type": "ConstructorCall",
-                                                "children": []
-                                              },
-                                              {
-                                                "label": "parseClass",
+                                                "label": "stream",
                                                 "type": "Invocation",
                                                 "children": [
                                                   {
-                                                    "label": "spoon.Launcher",
+                                                    "label": "java.util.Arrays",
                                                     "type": "TypeAccess",
                                                     "children": []
                                                   },
                                                   {
-                                                    "label": "readFileToString",
-                                                    "type": "Invocation",
+                                                    "label": "args",
+                                                    "type": "VariableRead",
+                                                    "children": []
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "label": "lambda$0",
+                                                "type": "Lambda",
+                                                "children": [
+                                                  {
+                                                    "label": "file",
+                                                    "type": "Parameter",
                                                     "children": [
                                                       {
-                                                        "label": "org.apache.commons.io.FileUtils",
-                                                        "type": "TypeAccess",
+                                                        "label": "java.lang.String",
+                                                        "type": "VARIABLE_TYPE",
+                                                        "children": []
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "label": "launcher",
+                                                    "type": "LocalVariable",
+                                                    "children": [
+                                                      {
+                                                        "label": "se.wasp.parser.var",
+                                                        "type": "VARIABLE_TYPE",
                                                         "children": []
                                                       },
                                                       {
-                                                        "label": "java.io.File(java.lang.String)",
+                                                        "label": "spoon.Launcher()",
                                                         "type": "ConstructorCall",
+                                                        "children": []
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "label": "setCommentEnabled",
+                                                    "type": "Invocation",
+                                                    "children": [
+                                                      {
+                                                        "label": "getEnvironment",
+                                                        "type": "Invocation",
                                                         "children": [
                                                           {
-                                                            "label": "file",
+                                                            "label": "launcher",
                                                             "type": "VariableRead",
                                                             "children": []
                                                           }
                                                         ]
                                                       },
                                                       {
-                                                        "label": "\"utf8\"",
+                                                        "label": "true",
                                                         "type": "Literal",
+                                                        "children": []
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "label": "addInputResource",
+                                                    "type": "Invocation",
+                                                    "children": [
+                                                      {
+                                                        "label": "launcher",
+                                                        "type": "VariableRead",
+                                                        "children": []
+                                                      },
+                                                      {
+                                                        "label": "file",
+                                                        "type": "VariableRead",
+                                                        "children": []
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "label": "buildModel",
+                                                    "type": "Invocation",
+                                                    "children": [
+                                                      {
+                                                        "label": "launcher",
+                                                        "type": "VariableRead",
+                                                        "children": []
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "label": "return",
+                                                    "type": "Return",
+                                                    "children": [
+                                                      {
+                                                        "label": "getJSONasJsonObject",
+                                                        "type": "Invocation",
+                                                        "children": [
+                                                          {
+                                                            "label": "gumtree.spoon.builder.Json4SpoonGenerator()",
+                                                            "type": "ConstructorCall",
+                                                            "children": []
+                                                          },
+                                                          {
+                                                            "label": "getRootPackage",
+                                                            "type": "Invocation",
+                                                            "children": [
+                                                              {
+                                                                "label": "getModel",
+                                                                "type": "Invocation",
+                                                                "children": [
+                                                                  {
+                                                                    "label": "launcher",
+                                                                    "type": "VariableRead",
+                                                                    "children": []
+                                                                  }
+                                                                ]
+                                                              }
+                                                            ]
+                                                          }
+                                                        ]
+                                                      },
+                                                      {
+                                                        "label": "Use J4S to make it into JSON",
+                                                        "type": "Comment",
                                                         "children": []
                                                       }
                                                     ]
@@ -260,86 +323,74 @@ Output of running
                                                 ]
                                               }
                                             ]
+                                          },
+                                          {
+                                            "label": "lambda$1",
+                                            "type": "Lambda",
+                                            "children": [
+                                              {
+                                                "label": "obj",
+                                                "type": "Parameter",
+                                                "children": [
+                                                  {
+                                                    "label": "com.google.gson.JsonObject",
+                                                    "type": "VARIABLE_TYPE",
+                                                    "children": []
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "label": "NE",
+                                                "type": "BinaryOperator",
+                                                "children": [
+                                                  {
+                                                    "label": "obj",
+                                                    "type": "VariableRead",
+                                                    "children": []
+                                                  },
+                                                  {
+                                                    "label": "null",
+                                                    "type": "Literal",
+                                                    "children": []
+                                                  }
+                                                ]
+                                              }
+                                            ]
                                           }
                                         ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "label": "println",
+                                "type": "Invocation",
+                                "children": [
+                                  {
+                                    "label": "out",
+                                    "type": "FieldRead",
+                                    "children": [
+                                      {
+                                        "label": "java.lang.System",
+                                        "type": "TypeAccess",
+                                        "children": []
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "label": "toJson",
+                                    "type": "Invocation",
+                                    "children": [
+                                      {
+                                        "label": "com.google.gson.Gson()",
+                                        "type": "ConstructorCall",
+                                        "children": []
                                       },
                                       {
-                                        "label": "",
-                                        "type": "Catch",
-                                        "children": [
-                                          {
-                                            "label": "e",
-                                            "type": "CatchVariable",
-                                            "children": [
-                                              {
-                                                "label": "java.io.FileNotFoundException",
-                                                "type": "VARIABLE_TYPE",
-                                                "children": []
-                                              }
-                                            ]
-                                          },
-                                          {
-                                            "label": "printStackTrace",
-                                            "type": "Invocation",
-                                            "children": [
-                                              {
-                                                "label": "e",
-                                                "type": "VariableRead",
-                                                "children": []
-                                              }
-                                            ]
-                                          },
-                                          {
-                                            "label": "return",
-                                            "type": "Return",
-                                            "children": [
-                                              {
-                                                "label": "null",
-                                                "type": "Literal",
-                                                "children": []
-                                              }
-                                            ]
-                                          }
-                                        ]
-                                      },
-                                      {
-                                        "label": "",
-                                        "type": "Catch",
-                                        "children": [
-                                          {
-                                            "label": "e",
-                                            "type": "CatchVariable",
-                                            "children": [
-                                              {
-                                                "label": "java.io.IOException",
-                                                "type": "VARIABLE_TYPE",
-                                                "children": []
-                                              }
-                                            ]
-                                          },
-                                          {
-                                            "label": "printStackTrace",
-                                            "type": "Invocation",
-                                            "children": [
-                                              {
-                                                "label": "e",
-                                                "type": "VariableRead",
-                                                "children": []
-                                              }
-                                            ]
-                                          },
-                                          {
-                                            "label": "return",
-                                            "type": "Return",
-                                            "children": [
-                                              {
-                                                "label": "null",
-                                                "type": "Literal",
-                                                "children": []
-                                              }
-                                            ]
-                                          }
-                                        ]
+                                        "label": "results",
+                                        "type": "VariableRead",
+                                        "children": []
                                       }
                                     ]
                                   }
@@ -348,83 +399,17 @@ Output of running
                             ]
                           },
                           {
-                            "label": "lambda$1",
-                            "type": "Lambda",
-                            "children": [
-                              {
-                                "label": "obj",
-                                "type": "Parameter",
-                                "children": [
-                                  {
-                                    "label": "com.google.gson.JsonObject",
-                                    "type": "VARIABLE_TYPE",
-                                    "children": []
-                                  }
-                                ]
-                              },
-                              {
-                                "label": "NE",
-                                "type": "BinaryOperator",
-                                "children": [
-                                  {
-                                    "label": "obj",
-                                    "type": "VariableRead",
-                                    "children": []
-                                  },
-                                  {
-                                    "label": "null",
-                                    "type": "Literal",
-                                    "children": []
-                                  }
-                                ]
-                              }
-                            ]
+                            "label": "Parses",
+                            "type": "JavaDoc",
+                            "children": []
                           }
                         ]
                       }
                     ]
                   }
                 ]
-              },
-              {
-                "label": "println",
-                "type": "Invocation",
-                "children": [
-                  {
-                    "label": "out",
-                    "type": "FieldRead",
-                    "children": [
-                      {
-                        "label": "java.lang.System",
-                        "type": "TypeAccess",
-                        "children": []
-                      }
-                    ]
-                  },
-                  {
-                    "label": "toJson",
-                    "type": "Invocation",
-                    "children": [
-                      {
-                        "label": "com.google.gson.Gson()",
-                        "type": "ConstructorCall",
-                        "children": []
-                      },
-                      {
-                        "label": "results",
-                        "type": "VariableRead",
-                        "children": []
-                      }
-                    ]
-                  }
-                ]
               }
             ]
-          },
-          {
-            "label": "Hello world!",
-            "type": "JavaDoc",
-            "children": []
           }
         ]
       }
@@ -435,67 +420,85 @@ Output of running
     "type": "root",
     "children": [
       {
-        "label": "AppTest",
-        "type": "Class",
+        "label": "unnamed package",
+        "type": "RootPac",
         "children": [
           {
-            "label": "",
-            "type": "Modifiers_Class",
+            "label": "se",
+            "type": "Package",
             "children": [
               {
-                "label": "public",
-                "type": "Modifier",
-                "children": []
-              }
-            ]
-          },
-          {
-            "label": "shouldAnswerWithTrue",
-            "type": "Method",
-            "children": [
-              {
-                "label": "void",
-                "type": "RETURN_TYPE",
-                "children": []
-              },
-              {
-                "label": "",
-                "type": "Modifiers_Method",
+                "label": "wasp",
+                "type": "Package",
                 "children": [
                   {
-                    "label": "public",
-                    "type": "Modifier",
-                    "children": []
+                    "label": "AppTest",
+                    "type": "Class",
+                    "children": [
+                      {
+                        "label": "",
+                        "type": "Modifiers_Class",
+                        "children": [
+                          {
+                            "label": "public",
+                            "type": "Modifier",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "label": "shouldAnswerWithTrue",
+                        "type": "Method",
+                        "children": [
+                          {
+                            "label": "void",
+                            "type": "RETURN_TYPE",
+                            "children": []
+                          },
+                          {
+                            "label": "",
+                            "type": "Modifiers_Method",
+                            "children": [
+                              {
+                                "label": "public",
+                                "type": "Modifier",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "label": "@org.junit.Test",
+                            "type": "Annotation",
+                            "children": []
+                          },
+                          {
+                            "label": "assertTrue",
+                            "type": "Invocation",
+                            "children": [
+                              {
+                                "label": "true",
+                                "type": "Literal",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "label": "Rigorous Test :-)",
+                            "type": "JavaDoc",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "label": "Unit test for simple App.",
+                        "type": "JavaDoc",
+                        "children": []
+                      }
+                    ]
                   }
                 ]
-              },
-              {
-                "label": "@Test",
-                "type": "Annotation",
-                "children": []
-              },
-              {
-                "label": "assertTrue",
-                "type": "Invocation",
-                "children": [
-                  {
-                    "label": "true",
-                    "type": "Literal",
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "label": "Rigorous Test :-)",
-                "type": "JavaDoc",
-                "children": []
               }
             ]
-          },
-          {
-            "label": "Unit test for simple App.",
-            "type": "JavaDoc",
-            "children": []
           }
         ]
       }

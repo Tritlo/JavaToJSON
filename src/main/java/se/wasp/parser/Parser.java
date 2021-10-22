@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 import com.google.gson.Gson;
@@ -24,15 +25,12 @@ public class Parser
     {
         var results = Arrays.stream(args).map((Function<String, JsonObject>) file ->
         {
-            try {
-                return (new Json4SpoonGenerator()).getJSONasJsonObject(Launcher.parseClass(FileUtils.readFileToString(new File(file), "utf8")));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return null;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
+                var launcher = new Launcher();
+                launcher.getEnvironment().setCommentEnabled(true);
+                launcher.addInputResource(file);
+                launcher.buildModel();
+                // Use J4S to make it into JSON
+                return (new Json4SpoonGenerator()).getJSONasJsonObject(launcher.getModel().getRootPackage());
 
         }).filter( obj -> obj != null).toList();
 
