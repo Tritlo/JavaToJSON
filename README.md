@@ -93,7 +93,7 @@ public class AppTest
 
 Output of running
 
-`java -jar target/parser-1.0-jar-with-dependencies.jar src/main/java/se/wasp/parser/Parser.java src/test/java/se/wasp/AppTest.java`
+`java -jar target/parser-1.0-jar-with-dependencies.jar src/main/java/se/wasp/parser/Parser.java src/test/java/se/wasp/AppTest.java | jq`
 
 ```json
 [
