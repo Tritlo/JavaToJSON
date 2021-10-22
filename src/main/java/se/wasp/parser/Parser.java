@@ -1,18 +1,17 @@
 package se.wasp.parser;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.function.Function;
 
+import com.github.gumtreediff.tree.ITree;
+import com.github.gumtreediff.tree.TreeContext;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import org.apache.commons.io.FileUtils;
-
 import gumtree.spoon.builder.Json4SpoonGenerator;
+import gumtree.spoon.builder.SpoonGumTreeBuilder;
+import gumtree.spoon.builder.jsonsupport.NodePainter;
 import spoon.Launcher;
 
 /**
@@ -30,7 +29,14 @@ public class Parser
                 launcher.addInputResource(file);
                 launcher.buildModel();
                 // Use J4S to make it into JSON
-                return (new Json4SpoonGenerator()).getJSONasJsonObject(launcher.getModel().getRootPackage());
+                // Taken from the gumtree-spoon-ast-diff, we need to get to a tree context
+                // so we can add a list of operations (like source location).
+                SpoonGumTreeBuilder builder = new SpoonGumTreeBuilder();
+		        ITree generatedTree = builder.getTree(launcher.getModel().getRootPackage());
+		        TreeContext tcontext = builder.getTreeContext();
+                // We add the "Loc" painter, which just adds the location to the JSON object.
+                Collection<NodePainter> opList = Arrays.asList(new Loc());
+                return (new Json4SpoonGenerator()).getJSONwithCustorLabels(tcontext, generatedTree, opList);
 
         }).filter( obj -> obj != null).toList();
 
