@@ -39,6 +39,26 @@ Note, ASTFilter is just a wrapper around invoking `jq` directly using a filter:
 
 `jq ".. | select(.children?) | select(.children | .[] | .children? | .[] | .label == \"$VISIBLITY\") | select(.spoon_class == \"$TYPE\")" <&0`
 
+Replace Literal
+---
+We can replace literals using "LitReplace.sh":
+`java -jar target/parser-1.0-jar-with-dependencies.jar Hello.java | ./ASTFilter.sh public method | ./LitReplace.sh '\"hello, world\"' '"goodbye, world"'`
+
+Which produces a diff:
+
+```
+diff --git a/home/tritlo/WASPProj/parser/Hello.java b/home/tritlo/WASPProj/parser/Hello.java
+--- a/home/tritlo/WASPProj/parser/Hello.java
++++ b/home/tritlo/WASPProj/parser/Hello.java
+@@ -3,1 +3,1 @@
+-    System.out.println("hello, world");
++    System.out.println("goodbye, world");
+```
+
+By adding `git apply`, we can modify the source file:
+
+`java -jar target/parser-1.0-jar-with-dependencies.jar Hello.java | ./ASTFilter.sh public method | ./LitReplace.sh '\"hello, world\"' '"goodbye, world"' | git apply`
+
 
 Example:
 ---
