@@ -20,10 +20,10 @@ public class Loc implements NodePainter {
             var pos = el.getPosition();
             if (pos.isValidPosition()){
                 var loc = new JsonObject();
-                loc.addProperty("start-line", pos.getLine());
-                loc.addProperty("end-line", pos.getEndLine());
-                loc.addProperty("start-col", pos.getColumn());
-                loc.addProperty("end-col", pos.getEndColumn());
+                loc.addProperty("start_line", pos.getLine());
+                loc.addProperty("end_line", pos.getEndLine());
+                loc.addProperty("start_col", pos.getColumn());
+                loc.addProperty("end_col", pos.getEndColumn());
                 loc.addProperty("file", pos.getFile().getAbsolutePath());
                 return loc;
             }
@@ -36,8 +36,8 @@ public class Loc implements NodePainter {
             CtElement el = (CtElement) spobj;
             var pos = el.getPosition();
             jsontree.add("location", getPosObj(el));
-            jsontree.addProperty("pretty-printed", el.toString());
-            jsontree.addProperty("spoon-class", spobj.getClass().getName());
+            jsontree.addProperty("pretty_printed", el.toString());
+            jsontree.addProperty("spoon_class", spobj.getClass().getName());
 
             if (spobj.getClass() == CtClassImpl.class){
                 var imports = Arrays.stream(pos.getCompilationUnit().getImports().toArray()).map(i ->
@@ -49,8 +49,8 @@ public class Loc implements NodePainter {
                        }
                        imp.addProperty("reference", iel.getReference() != null ? iel.getReference().toString() : null);
                        imp.add("location", getPosObj(iel));
-                       imp.addProperty("pretty-printed", iel.toString());
-                       imp.addProperty("spoon-class", i.getClass().getName());
+                       imp.addProperty("pretty_printed", iel.toString());
+                       imp.addProperty("spoon_class", i.getClass().getName());
                        return imp;
                     }).toList();
                 JsonArray imps = new JsonArray();

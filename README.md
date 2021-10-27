@@ -14,6 +14,31 @@ Run with
 
 `java -jar target/parser-1.0-jar-with-dependencies <file1.java> <file2.java> <etc...>`
 
+Filtering
+---
+
+We can filter the output using `jq` (note, requires jq to be installed).
+
+To use a predefined filter, you can pipe the input into `ASTFilter.sh <visibilty> <type>` where
+`<visibility>` is either `public` or `private`  and `<type>` is either `class` or `method`.
+
+You can then manipulate the resulting AST nodes, or just get their labels by using `jq .label`.
+
+Example:
+```
+mvn clean install && java -jar target/parser-1.0-jar-with-dependencies.jar src/main/java/se/wasp/parser/ | ./ASTFilter.sh public class | jq .label
+``` 
+
+returns
+```
+"Loc"
+"Parser"
+```
+
+Note, ASTFilter is just a wrapper around invoking `jq` directly using a filter:
+
+`jq ".. | select(.children?) | select(.children | .[] | .children? | .[] | .label == \"$VISIBLITY\") | select(.spoon_class == \"$TYPE\")" <&0`
+
 
 Example:
 ---
