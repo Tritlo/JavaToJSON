@@ -55,9 +55,9 @@ diff --git a/home/tritlo/WASPProj/parser/Hello.java b/home/tritlo/WASPProj/parse
 +    System.out.println("goodbye, world");
 ```
 
-By adding `git apply`, we can modify the source file:
+By adding `patch`, we can modify the source file:
 
-`java -jar target/parser-1.0-jar-with-dependencies.jar Hello.java | ./ASTFilter.sh public method | ./LitReplace.sh '\"hello, world\"' '"goodbye, world"' | git apply`
+`java -jar target/parser-1.0-jar-with-dependencies.jar Hello.java | ./ASTFilter.sh public method | ./LitReplace.sh '\"hello, world\"' '"goodbye, world"' | patch`
 
 
 Example:
