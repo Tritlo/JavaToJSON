@@ -4,3 +4,6 @@ target
 .project
 .settings/
 .vscode
+out2
+out
+.swp

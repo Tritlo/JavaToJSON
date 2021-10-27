@@ -45,10 +45,9 @@ public class Loc implements NodePainter {
                        var imp = new JsonObject();
                        imp.addProperty("type", "Import");
                        if (iel.getReference() != null){
-                        imp.addProperty("label", iel.getReference().toString());
-                       } else {
-                        imp.addProperty("label", iel.toString());
+                         imp.addProperty("label", iel.toString());
                        }
+                       imp.addProperty("reference", iel.getReference() != null ? iel.getReference().toString() : null);
                        imp.add("location", getPosObj(iel));
                        imp.addProperty("pretty-printed", iel.toString());
                        imp.addProperty("spoon-class", i.getClass().getName());
