@@ -3,7 +3,7 @@
 # Find the Literal we want to replace using JQ.
 RES=$(jq ".. | select(.type? == \"Literal\") | select(.label == \"$1\")")
 #Set the new source to the new literal
-NEWRES=$(echo $RES | jq ".pretty_printed = \"$2\"")
+NEWRES=$(echo $RES | jq ".pretty_printed = $2")
 LOC=$(echo $RES | jq -r '.location')
 FILE=$(echo $LOC | jq -r '.file')
 STARTLINE=$(echo $LOC | jq -r '.start_line')
