@@ -27,7 +27,7 @@ You can then manipulate the resulting AST nodes, or just get their labels by usi
 Example:
 ```
 mvn clean install && java -jar target/parser-1.0-jar-with-dependencies.jar src/main/java/se/wasp/parser/ | ./ASTFilter.sh public class | jq .label
-``` 
+```
 
 returns
 ```
@@ -2053,3 +2053,12 @@ Output of running
   }
 ]
 ```
+
+
+
+New
+===
+
+`java -jar target/parser-1.0-jar-with-dependencies.jar Hello.java 2>/dev/null | ./FindLiteral.sh '\"hello, world\"' | ./ModifyLiteral.sh '\"goodbye, world\"' | ./GenDiff.sh`
+
+`java -jar target/parser-1.0-jar-with-dependencies.jar Hello.java 2>/dev/null | ./ToCSV.sh`
