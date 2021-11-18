@@ -15,4 +15,4 @@ jq '(.. | select(.children?) | select(.spoon_class?)
          , .label?
          , .parent?.location?.start_line, .parent?.location?.end_line, .parent?.location?.start_col,.parent?.location?.end_col, .parent?.spoon_class
          , if (.type == "Class") then (.children[]?.children[].label | select( . == "public" or .=="private")) else null end
-         ] | @csv' -r
+         ] | @csv' -r | awk -F ',' '{OFS=","; gsub(/"/,"",$1); gsub(/"/,"",$12); gsub(/"/,"",$13); print $0}'
