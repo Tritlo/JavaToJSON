@@ -7,8 +7,6 @@ ORIG=$(jq)
 FILTERED=$(echo $ORIG | jq "select(.type? == \"Literal\") ")
 if [[ ! -z "$FILTERED" ]];
 then
-    echo $ORIG
     RES=$(echo $FILTERED | jq ".pretty_printed = \"$1\"")
-    echo $RES
     jq --null-input --argjson NEW "$RES" --argjson OLD "$FILTERED" '{"old": $OLD, "new": $NEW}'
 fi
