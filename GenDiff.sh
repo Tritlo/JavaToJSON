@@ -11,7 +11,7 @@ STARTCOLLESSONE=$(echo $LOC | jq -r '.start_col - 1')
 ENDCOLADDONE=$(echo $LOC | jq -r '.end_col +1')
 NUMLINES=$(echo $LOC | jq -r '.start_line - .end_line + 1')
 NEWSTR=$(echo $NEWRES | jq -r '.pretty_printed')
-NUMLINESNEW=$(echo $NEWSTR | wc -l)
+NUMLINESNEW=$(echo -e "$NEWSTR" | wc -l)
 echo "diff --git a/$FILE b/$FILE"
 echo "--- a/$FILE"
 echo "+++ b/$FILE"
